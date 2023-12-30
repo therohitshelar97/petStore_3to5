@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Home Page</h1>
+    <h1>{{data}}</h1>
+    <h1>{{data1}}</h1>
+  
+    {% if data1 %}
+
+    {% for i in data1 %}
+        <h1 >{{i}}</h1>
+    {% endfor %}
+
+    {% else %}
+    <h1>There is no data in data1</h1>
+
+    {% endif %}
+</body>
+</html>

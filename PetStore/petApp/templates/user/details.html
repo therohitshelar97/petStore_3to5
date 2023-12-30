@@ -1,0 +1,23 @@
+{% extends 'user/base.html' %}
+
+{% block title %} Details {% endblock %}
+
+
+
+{% block content %}
+
+   <div class="container">
+    <div class="row">
+        {% for i in data %}
+        <div class="col-lg-6">
+            <img src={{i.image.url}} height="500" width="300" />
+        </div>
+        <div class="col-lg-6">
+            <h1>Name : {{i.pname}}</h1>
+        </div>
+        {% endfor %}
+
+    </div>
+   </div>
+
+{% endblock %}
