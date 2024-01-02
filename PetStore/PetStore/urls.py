@@ -22,7 +22,7 @@ from petApp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.Index,name='index'),
+    path('index/',views.Index,name='index'),
     path('display/',views.Display, name='display'),
     path('delete/<int:id>',views.Delete, name='delete'),
     path('update/<int:id>',views.Update,name='update'),
@@ -31,7 +31,9 @@ urlpatterns = [
     path('cart/',views.AddToCart,name='cart'),
     path('removecart/<int:id>',views.RemoveCart,name='removecart'),
     path('search/',views.ComponetSearch,name='search'),
-    path('details/<int:id>',views.Details,name='details')
+    path('details/<int:id>',views.Details,name='details'),
+    path('signup/',views.SignUp, name='signup'),
+    path('',views.Login, name='login')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
