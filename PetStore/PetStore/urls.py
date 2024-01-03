@@ -33,7 +33,8 @@ urlpatterns = [
     path('search/',views.ComponetSearch,name='search'),
     path('details/<int:id>',views.Details,name='details'),
     path('signup/',views.SignUp, name='signup'),
-    path('',views.Login, name='login')
+    path('',views.Login, name='login'),
+    path('logout/',views.Logout, name='logout')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

@@ -48,14 +48,17 @@ def Update(request,id):
 
 def UserBase(request):
     if request.user.is_authenticated:
-        return render(request,'user/base.html')
+        count = Cart.objects.all().count()
+        # print(count)
+        return render(request,'user/base.html',{'count':count})
     else:
         return HttpResponseRedirect('/')
 
 def UserIndex(request):
     if request.user.is_authenticated:
         data = Product.objects.all()
-        return render(request,'user/index.html',{'data':data})
+        count = Cart.objects.filter(user_id=request.user).count()
+        return render(request,'user/index.html',{'data':data,'count':count})
     else:
         return HttpResponseRedirect('/')
 
@@ -63,8 +66,14 @@ def AddToCart(request):
     if request.user.is_authenticated:
         if request.method == "POST":
             cid = request.POST.get('cid')
-            Cart.objects.create(product_id=cid)
-        cid = Cart.objects.all().values_list('product_id',flat=True)
+            filter1 = Cart.objects.all().values_list('product_id',flat=True)
+            # print(type(cid))
+            if int(cid) not in filter1: 
+                Cart.objects.create(product_id=cid,user=request.user)
+                return HttpResponseRedirect('/cart/')
+            else:
+                messages.success(request,"This Product Is Alredy Added In Cart")
+        cid = Cart.objects.filter(user_id=request.user).values_list('product_id',flat=True)
         cartdata = Product.objects.filter(id__in=cid)
         amount = Product.objects.filter(id__in=cid).values_list('price',flat=True)
         amt=0
@@ -99,6 +108,7 @@ def ComponetSearch(request):
     
 def Details(request,id):
     if request.user.is_authenticated:
+        print(request.user)
         data_detail = Product.objects.filter(pk=id)
         print(data_detail)
         return render(request,'user/details.html',{'data':data_detail})
@@ -117,4 +127,15 @@ def SignUp(request):
     return render(request, 'user/signup.html')
 
 def Login(request):
+    if request.method == "POST":
+        username = request.POST.get('uname')
+        password = request.POST.get('pass') 
+        user = authenticate(request, username=username, password=password) 
+        if user is not None:
+            login(request,user)
+            return HttpResponseRedirect('/userindex/')
     return render(request,'user/login.html')
+
+def Logout(request):
+    logout(request)
+    return HttpResponseRedirect('/')
