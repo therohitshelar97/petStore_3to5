@@ -12,6 +12,9 @@ class Product(models.Model):
     date = models.DateField(auto_now=True,null=True)
     time = models.TimeField(auto_now=True, null=True)
     image = models.ImageField(upload_to='media',null=True)
+    img1 = models.ImageField(upload_to='media',null=True)
+    img2 = models.ImageField(upload_to='media',null=True)
+    img3 = models.ImageField(upload_to='media',null=True)
 
 class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

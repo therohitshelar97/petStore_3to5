@@ -1,11 +1,17 @@
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from .models import Product, Cart
 from .forms import ProductForm
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.core.mail import send_mail 
+from django.conf import settings
 # Create your views here.
+
+def Email(request):
+    send_mail('Welcome', 'Nothing Special.......',settings.EMAIL_HOST_USER,['prasadmhasal@gmail.com','omsawant2525@gmail.com'])
+    return HttpResponse('Mail Sending.....')
 
 def Index(request):
     if request.method == "POST":
@@ -66,7 +72,7 @@ def AddToCart(request):
     if request.user.is_authenticated:
         if request.method == "POST":
             cid = request.POST.get('cid')
-            filter1 = Cart.objects.all().values_list('product_id',flat=True)
+            filter1 = Cart.objects.filter(user_id=request.user).values_list('product_id',flat=True)
             # print(type(cid))
             if int(cid) not in filter1: 
                 Cart.objects.create(product_id=cid,user=request.user)
@@ -79,7 +85,7 @@ def AddToCart(request):
         amt=0
         for i in amount:
             amt=amt+i
-        return render(request,'user/cart.html',{'cdata':cartdata,'amt':amt})
+        return render(request,'user/cart.html',{'cdata':cartdata,'amt':amt}) 
     else:
         return HttpResponseRedirect('/')
 
@@ -116,25 +122,51 @@ def Details(request,id):
         return HttpResponseRedirect('/')
 
 def SignUp(request):
-    if request.method == "POST":
-        uname = request.POST.get('uname')
-        email = request.POST.get('email')
-        pass1 = request.POST.get('pass')
-        print(uname,pass1,email)
-        User.objects.create_user(uname,email,pass1)
-        messages.success(request, 'SignUp Successfully')
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/userindex/')
+    else:
+        if request.method == "POST":
+            uname = request.POST.get('uname')
+            email = request.POST.get('email')
+            pass1 = request.POST.get('pass')
+            print(uname,pass1,email)
+            User.objects.create_user(uname,email,pass1)
+            
+            subject = f'Welcome To Pet Store {uname}'
+            message = f"""
+                    Dear {uname},
+                        
+                    You have successfully register to The_Pet_Store
+                    with {email} this email,
 
-    return render(request, 'user/signup.html')
+                    Thank you for selecting The_Pet_Store
+
+                    Happy Shopping...Keep Shopping...Stay In Touch
+
+                    'Note: please do not reply to this mail because it is auto generated..'
+                        
+                    """
+            mail_from = settings.EMAIL_HOST_USER
+            mail_to = email
+            send_mail(subject,message,mail_from,[mail_to])
+
+            messages.success(request, 'SignUp Successfully')
+
+
+        return render(request, 'user/signup.html')
 
 def Login(request):
-    if request.method == "POST":
-        username = request.POST.get('uname')
-        password = request.POST.get('pass') 
-        user = authenticate(request, username=username, password=password) 
-        if user is not None:
-            login(request,user)
-            return HttpResponseRedirect('/userindex/')
-    return render(request,'user/login.html')
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/userindex/')
+    else:
+        if request.method == "POST":
+            username = request.POST.get('uname')
+            password = request.POST.get('pass') 
+            user = authenticate(request, username=username, password=password) 
+            if user is not None:
+                login(request,user)
+                return HttpResponseRedirect('/userindex/')
+        return render(request,'user/login.html')
 
 def Logout(request):
     logout(request)
