@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
-from .models import Product, Cart
+from .models import Product, Cart, Address
 from .forms import ProductForm
 from django.contrib import messages
 from django.db.models import Q
@@ -171,3 +171,22 @@ def Login(request):
 def Logout(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+def address(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            cname = request.POST.get('cname')
+            flat = request.POST.get('flat')
+            landmark = request.POST.get('landmark')
+            city = request.POST.get('city')
+            state = request.POST.get('state')
+            pincode = request.POST.get('pincode')
+            contact = request.POST.get('contact')
+            acontact = request.POST.get('acontact')
+            # print(cname,flat,landmark,city,state,pincode,contact,acontact)
+            Address.objects.create(user=request.user,name=cname,flat=flat,landmark=landmark,city=city,state=state,pincode=pincode,contact=contact,contactA=acontact)
+        #here we are fetching data from address table
+        data = Address.objects.filter(user_id=request.user)
+        return render(request,'user/address.html',{'adata':data})
+    else:
+        return HttpResponseRedirect('/')

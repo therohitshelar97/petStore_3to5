@@ -19,5 +19,15 @@ class Product(models.Model):
 class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    
+
+class Address(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+    name = models.CharField(max_length=200,null=True) 
+    flat = models.CharField(max_length=300, null=True) 
+    landmark = models.CharField(max_length=200,null=True)
+    city = models.CharField(max_length=200,null=True)
+    state = models.CharField(max_length=100,null=True)
+    pincode = models.IntegerField(null=True)
+    contact = models.BigIntegerField(null=True)
+    contactA = models.BigIntegerField(null=True)
 
