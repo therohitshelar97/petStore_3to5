@@ -36,7 +36,8 @@ urlpatterns = [
     path('',views.Login, name='login'),
     path('logout/',views.Logout, name='logout'),
     path('mail/',views.Email),
-    path('address/',views.address, name='address')
+    path('address/<int:id>',views.address, name='address'),
+    path('preorder/<int:aid>/<int:pid>',views.Pre_Order,name='preorder')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

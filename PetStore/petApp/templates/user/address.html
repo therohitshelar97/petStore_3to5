@@ -35,6 +35,7 @@
                     </p>
                     <h5>contact : {{i.contact}}</h5>
                     <h5>alternate_contact : {{i.contactA}}</h5>
+                    <a href="{% url 'preorder' i.id product_id %}" class="btn btn-warning">continue_with_this_address</a>
             </div>
             {% endfor %}
 

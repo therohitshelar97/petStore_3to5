@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail 
 from django.conf import settings
+from datetime import date,timedelta
 # Create your views here.
 
 def Email(request):
@@ -63,8 +64,12 @@ def UserBase(request):
 def UserIndex(request):
     if request.user.is_authenticated:
         data = Product.objects.all()
-        count = Cart.objects.filter(user_id=request.user).count()
-        return render(request,'user/index.html',{'data':data,'count':count})
+        count = Cart.objects.filter(user_id=request.user).count()\
+        
+        date1 = date.today()
+        days = timedelta(days=7)
+        delivery_date = date1+days
+        return render(request,'user/index.html',{'data':data,'count':count,'date':delivery_date})
     else:
         return HttpResponseRedirect('/')
 
@@ -172,7 +177,7 @@ def Logout(request):
     logout(request)
     return HttpResponseRedirect('/')
 
-def address(request):
+def address(request,id):
     if request.user.is_authenticated:
         if request.method == 'POST':
             cname = request.POST.get('cname')
@@ -186,7 +191,16 @@ def address(request):
             # print(cname,flat,landmark,city,state,pincode,contact,acontact)
             Address.objects.create(user=request.user,name=cname,flat=flat,landmark=landmark,city=city,state=state,pincode=pincode,contact=contact,contactA=acontact)
         #here we are fetching data from address table
+        product_id = id
         data = Address.objects.filter(user_id=request.user)
-        return render(request,'user/address.html',{'adata':data})
+        return render(request,'user/address.html',{'adata':data,'product_id':product_id})
     else:
         return HttpResponseRedirect('/')
+
+def Pre_Order(request,aid,pid):
+    address_data = Address.objects.filter(pk=aid)
+    product1_data = Product.objects.filter(pk=pid)
+    date1 = date.today()
+    days = timedelta(days=5)
+    delivery_date = date1+days
+    return render(request,'user/pre_order.html',{'adata':address_data,'pdata':product1_data,'date':delivery_date})
